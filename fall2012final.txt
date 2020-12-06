@@ -1,0 +1,35 @@
+;2012 Fall final
+;P1
+
+x3FFD	cfp
+x3FFE	return address
+x3FFF	return value
+X4000	*root
+
+LEFTMOST
+	ADD		R6, R6, #-1		;caller setup
+	ADD		R6, R6, #-3		;callee setup (bookkeeping)
+	STR		R5, R6, #0		;callee setup (storing cfp)
+	STR		R7, R6, #1		;callee setup (storing return address)
+	???		special case of where R5 should be pointing to?
+	
+;function logic
+	LDR		R0, R6, #3		;getting *root from stack
+	LDR		R1, R0, #0		;loading R0 with root->left
+	BRz		BASE_CASE
+	
+	
+BASE_CASE
+	LDR		R1, R0, #2		;putting root->data into R1
+	STR		R1, R6, #2		;storing root->data into return value on stack
+	
+	
+;P2
+int countNegatives(struct node* root){
+	if (!root) return 0; 	\\tree does not exist
+	int curr = 0;
+	if (root->data < 0){
+		curr = 1;
+	}
+	return countNegatives(root->left)+countNegatives(root->right)+curr;
+}
