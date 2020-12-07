@@ -7,35 +7,30 @@ int DetectLoop(node *head)
   if (!head){
     return 0; //not really necessary because input constrain
   }
-  node* array = (node*)malloc(sizeof(node));
+  node** array = (node**)malloc(sizeof(node*));
   int index = 0;
   array[0] = NULL;
   while(head){
-    index += 1;
     node* ele;
-    for(int i = 0; i<count; i++){
+    for(int i = 0; i<index; i++){
         ele = array[i];
         if (ele == head){
+            free(tmp);
             return 1;
         }
     }
-    array+1 = (node*)malloc(sizeof(node)); //STUCK: how to create a dynamic array on the run?
-    array[index] = head;
+    array = realloc(index+1, sizeof(node*));
+    array[index++] = head;
     head = head->next;
   }
+  free(tmp);
   return 0;
 }
-
-
-typedef struct node{
-    int value;
-    struct node * next; 
-    struct node * arbit;
-}node;
 
 node *CopyList(node *head)
 {
    //Insert Code here. You can change the return statement given.
+    node* oriwalk = head;
     node* cpynext = NULL;
     node* rv;
     node* rand;
@@ -46,32 +41,29 @@ node *CopyList(node *head)
         }
         cpynext->value = head->value;
         cpynext->next = (node*)malloc(sizeof(node));
-        /*traverse through the ll following the arbitrary pointers?
-        rand = head->arbit;
-        if (rand == head){
-            cpynext->arbit = cpynext; //the random pointer points back to current node
-        }
-        STUCK: if I traverse randomly, how to remember the pointer that points to my
-        */
-        
-        /*somehow need to create a hashtable?
-        HASHTABLE {ori pointer: copied pointer}
-        */
+        cpynext->arbit = head->arbit;
         head = head->next;
         cpynext = cpynext->next;
+    } //finish creating a copy of the ll as a singly ll, the random pointers are shared
+
+    //double loop: loop through every single node in ori ll, and have 'tmp' to remember what
+    //              that should be in the copied ll, and then loop through the copied ll, and update
+    node* cpywalk = rv;
+    node* tmp;
+    node* randptr;
+    while(oriwalk){
+        tmp = cpywalk;
+        while (cpywalk){
+            randptr = cpywalk->arbit;
+            if (randptr == oriwalk){
+                cpywalk->arbit = tmp;
+            }
+            cpywalk = cpywalk->next;
+        }
+        oriwalk = oriwalk->next;
+        cpywalk = tmp->next;
     }
-
-
-   return NULL;
+    return rv;
 }
 
-node *CopyList(node* head)
-{
-    node* rand;
-    while (head){
-        node* cpy = (node*)malloc(sizeof(node));
-        cpy->value = head->value;
-        rand = head->arbit;
-    }
-}
 
