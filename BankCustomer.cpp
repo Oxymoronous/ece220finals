@@ -2,7 +2,6 @@
 
 //Instantiate new customer with default accounts
 BankCustomer::BankCustomer(string first_name, string last_name){
-//IMPLEMENT ME
     my_customer.set_name(first_name, last_name);
 }
 
