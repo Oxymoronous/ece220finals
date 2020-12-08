@@ -37,6 +37,7 @@ node * farey_seq(int n)
     int newnum,newden;
     node* save = head;
 	for (i = 2; i<=n ; i++){
+		head = save;
         while ((head)&&(head->next)){
             a = head->numerator;
             b = head->next->numerator;
@@ -50,7 +51,6 @@ node * farey_seq(int n)
                 head->next->numerator = newnum;
                 head->next->denominator = newden;
                 head->next->next = tmp;
-                break;
             }
             head = head->next;
         }
