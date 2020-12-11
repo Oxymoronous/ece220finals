@@ -1,0 +1,20 @@
+Public, Private, Protected (source geeksforgeeks.org)
+
+1. Public
+- All class members declared under public will be available to other classes 
+and functions
+
+2. Private
+- Only member functions or the friend functions are allowed to access the private
+data members
+- not allowed to access directly by any object/function outside the class
+
+3. Protected
+- Similar to private in the sense that protected members also cannot be accessed 
+outside of its class unless with the help of a friend class
+- Protected members can be accessed by derived class
+
+4. Friend class/functions
+- Friends can access BOTH private and protected members of a class if it is declared
+as a friend of that class
+
