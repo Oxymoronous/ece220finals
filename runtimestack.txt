@@ -1,0 +1,89 @@
+Structure of a Runtime Stack:
+
+from top to bottom:
+1. local variables          (R6 points to the top of this, R5 points to the bottom of this)
+2. current frame pointer
+3. return address           (this is stored in R7)
+4. return value
+5. parameters               (caller setup does everything until here)
+6. caller's stack frame
+
+Parameters are pushed in from right to left
+
+;C to LC3 conversion example (no recursion version)
+;C code
+
+#include<stdio.h>
+int Factorial (int n);
+
+int main(){
+    int number;
+    int answer;
+    answer = Factorial(number);
+}
+
+int Factorial(int n){
+    int i, result = 1;
+    for (i=1; i<=n; i++){
+        result = result*i;
+    }
+    return result;
+}
+
+;General setup
+1. Caller setup (push parameters, invoke function)
+2. Callee setup (push bookkeeping and local var, execute function logic)
+3. callee teardown (pop local var, cfp, RA, return to caller)
+4. caller teardown (pop callee return value and parameters)
+
+.orig x3000
+main    
+    ld  r5, stack
+    ld  r6, stack
+    ld  r0, number
+    str r0, r6, #0
+    add r6, r6, #-1
+    ; answer (x3FFF) <-r6
+    ; number (x4000) <-r5
+
+;1. caller setup
+    ldr r1, r5, #0
+    str r1, r6, #-1
+    add r6, r6, #-1
+    jsr factorial
+    ;caller teardown
+    ldr r1, r6, #0
+    str r1, r5, #-1         ;performing assignment answer = Factorial(number)
+    add r6, r6, #2          ;pop return value and parameters
+
+factorial
+    ;   result = 1
+    ;   i
+    ;   CFP
+    ;   RA
+    ;   RV
+
+    ;2. callee setup
+    add r6, r6, #-5     ;2 local var + 3 bookkeep
+    str r7, r6, #3      ;storing RA     
+    str r5, r6, #2      ;storing cfp
+    add r5, r6, #1      ;updating new frame pointer, r5 should be bottom of loc var
+    and r1, r1, #0      
+    and r1, r1, #1
+    str r1, r6, #0
+
+;execute function (not included)
+
+;callee teardown
+    add r6, r6, #2      ;pop loc var
+    ldr r5, r6, #0      ;retrieve bookkeep cfp
+    add r6, r6, #1      
+    ldr r7, r6, #0      ;retrieve bookkeep RV
+    add r6, r6, #1
+    ret                 ;return back to caller
+
+
+
+stack   .fill   x4000
+number  .fill   x0005
+.end
