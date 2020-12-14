@@ -1,0 +1,30 @@
+We need to write a stack calculator that can perform ADD. Write the following code:
+
+a) provide space for a stack & initialize R6
+b) write a STACK_ADD function that pops two values off the stack,
+adds them, and pushes them back onto the stack. 
+You don’t need to worry about underflow during this emergency situation.
+c) write a PUSH function that interfaces with Purple’s code.
+He will pass the value to push in R0 and JSR to your PUSH. 
+He tells you not to worry about saving or restoring registers.
+
+.ORIG x3000
+    LD  R6, STACKBOT    ;initializing R6
+
+STACK_ADD
+    LDR R1, R6, #0      ;popping first value
+    ADD R6, R6, #1
+    LDR R2, R6, #0      ;popping second value
+    ADD R6, R6, #1
+    ADD R0, R1, R2      ;performing addition
+    JSR PUSH
+
+PUSH
+    STR R0, R6, #-1     ;pushing sum onto stack
+    ADD R6, R6, #-1
+    RET 
+
+STACKBOT    .FILL   x4000   ;allocating space for stack
+STACKTOP    .FILL   x3F00
+
+.END
