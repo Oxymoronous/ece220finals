@@ -1,0 +1,22 @@
+OUT stopped working (TRAP x21). Write code starting at x3000 to 
+a) repopulate the corresponding location in the trap vector table, and
+b) write the routine to output R0 to the display using your knowledge of DSR and DDR.
+
+.ORIG x3000
+; repopulating the corresponding location in the trap vector table    
+    LD  R0, VECTOR
+    LEA R1, OUT
+    STR R1, R0, #0
+
+OUT 
+    LDI     R2, DSR
+    BRzp    OUT
+    STI     R0, DDR
+
+HALT
+
+VECTOR  .FILL   x0021
+DSR     .FILL   xFE04
+DDR     .FILL   xFE06
+
+.END
